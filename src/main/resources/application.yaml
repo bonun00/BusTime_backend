@@ -1,0 +1,26 @@
+# 서버 포트 설정
+server:
+  port: 9000
+
+# database 연동 설정
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/busTime
+    username: root
+    password: biology00
+  thymeleaf:
+    cache: false
+
+  # spring data jpa 설정
+  jpa:
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+    open-in-view: false
+    show-sql: false
+    hibernate:
+      ddl-auto: create
+
+kakao:
+    api:
+       key: f49b811e441964b95c901265777e88bd
+
