@@ -1,5 +1,7 @@
-package bonun.bustime.entity;
+package bonun.bustime.entity.ToChilwon;
 
+import bonun.bustime.entity.BusEntity;
+import bonun.bustime.entity.StopEntity;
 import jakarta.persistence.*;
 import lombok.*;
 

@@ -1,36 +1,44 @@
-package bonun.bustime.entity;
+package bonun.bustime.entity.ToChilwon;
 
+import bonun.bustime.api.entity.RouteIdEntity;
+import bonun.bustime.entity.BusEntity;
+import bonun.bustime.entity.StopEntity;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalTime;
 
 @Entity
 @Getter
 @Setter
-@NoArgsConstructor // JPA를 위한 기본 생성자 추가
-@AllArgsConstructor
+@NoArgsConstructor
 public class RouteChilwonEntity {
-
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // 버스 번호 대신, BusEntity 자체를 1:1로 참조
-    @OneToOne
-    @JoinColumn(name = "bus_id", unique = true)
+    @ManyToOne
+    @JoinColumn(name = "bus_id")
     private BusEntity bus;
+    // 🔴 여러 노선 -> 하나의 RouteIdEntity
+    //  (하나의 routeId / routeNo를 여러 행이 참조 가능)
 
     @ManyToOne
     @JoinColumn(name = "start_location_id", nullable = false)
-    private StopEntity startLocation; // 출발 정류장
+    private StopEntity startLocation;
 
     @ManyToOne
     @JoinColumn(name = "end_location_id", nullable = false)
-    private StopEntity endLocation;   // 종점 정류장
+    private StopEntity endLocation;
+
+    // 🔹 새로 추가: 출발지 버스 시간
+    private LocalTime startLocationTime;
+
+    // 🔹 새로 추가: 종점 버스 시간
+    private LocalTime endLocationTime;
 
     public RouteChilwonEntity(BusEntity bus, StopEntity startLocation, StopEntity endLocation) {
         this.bus = bus;

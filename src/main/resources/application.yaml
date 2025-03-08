@@ -1,8 +1,8 @@
 # 서버 포트 설정
 server:
-  port: 9000
+  port: 1111
 
-# database 연동 설정
+# 데이터베이스 연동 설정
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -12,7 +12,7 @@ spring:
   thymeleaf:
     cache: false
 
-  # spring data jpa 설정
+  # Spring Data JPA 설정
   jpa:
     database-platform: org.hibernate.dialect.MySQL8Dialect
     open-in-view: false
@@ -20,7 +20,9 @@ spring:
     hibernate:
       ddl-auto: create
 
-kakao:
-    api:
-       key: f49b811e441964b95c901265777e88bd
 
+# 🔹 스케줄러 활성화
+management:
+  endpoint:
+    scheduling:
+      enabled: true

@@ -28,7 +28,10 @@ dependencies {
 
 	// Gson (JSON 파싱)
 	implementation 'com.google.code.gson:gson:2.10'
-
+	implementation 'com.googlecode.json-simple:json-simple:1.1'
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+	implementation 'io.lettuce:lettuce-core:6.3.0.RELEASE'
+// 🔹 최신 버전 사용 가능
 
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'

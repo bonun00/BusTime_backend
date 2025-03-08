@@ -1,13 +1,15 @@
 package bonun.bustime.service;
 
+import bonun.bustime.api.entity.RouteIdEntity;
+import bonun.bustime.api.repository.RouteIdRepository;
 import bonun.bustime.entity.BusEntity;
-import bonun.bustime.entity.BusTimeToChilwonEntity;
-import bonun.bustime.entity.RouteChilwonEntity;
 import bonun.bustime.entity.StopEntity;
+import bonun.bustime.entity.ToChilwon.BusTimeToChilwonEntity;
+import bonun.bustime.entity.ToChilwon.RouteChilwonEntity;
 import bonun.bustime.repository.BusRepository;
-import bonun.bustime.repository.BusTimeToChilwonRepository;
-import bonun.bustime.repository.RouteChilwonRepository;
 import bonun.bustime.repository.StopRepository;
+import bonun.bustime.repository.ToChilwon.BusTimeToChilwonRepository;
+import bonun.bustime.repository.ToChilwon.RouteChilwonRepository;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
@@ -16,8 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.time.LocalTime;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class ExcelToCilwonService {
@@ -30,11 +31,13 @@ public class ExcelToCilwonService {
     public ExcelToCilwonService(StopRepository stopRepository,
                                 BusRepository busRepository,
                                 BusTimeToChilwonRepository busTimeToChilwonRepository,
-                                RouteChilwonRepository routeChilwonRepository) {
+                                RouteChilwonRepository routeChilwonRepository
+                                ) {
         this.stopRepository = stopRepository;
         this.busRepository = busRepository;
         this.busTimeToChilwonRepository = busTimeToChilwonRepository;
         this.routeChilwonRepository = routeChilwonRepository;
+
     }
 
     @Transactional
@@ -73,11 +76,15 @@ public class ExcelToCilwonService {
                 Row row = sheet.getRow(rowIndex);
                 if (row == null) continue;
 
-                // 1) 버스 번호 (열 0)
+                // 1) 버스 번호 (열 0) - 예: "113-40"
                 String busNumber = extractCellValue(row.getCell(0));
                 if (busNumber.isEmpty()) {
                     continue;
                 }
+
+                // (예시) routeNo를 busNumber와 동일하게 가정
+                // 혹은 별도 열에서 routeNo/routeId를 파싱할 수도 있음
+                String routeNo = busNumber; // 🔴 가정: routeNo == busNumber
 
                 // BusEntity 조회/생성
                 BusEntity bus = busRepository.findByBusNumber(busNumber);
@@ -87,31 +94,34 @@ public class ExcelToCilwonService {
                     busRepository.save(bus);
                 }
 
-                // 2) 출발점: "처음 발견한 시간" (열 1..18) => Row 5 헤더
-                StopEntity startLocation = findStartLocationByFirstTime(row, stopMap);
 
-                // 3) 종점: 열 23의 정류장
+
+                // 2) 출발점 + 종점
+                StopEntity startLocation = findStartLocationByFirstTime(row, stopMap);
                 StopEntity endLocation = findStopInCell(row, 23);
 
-                // 4) RouteEntity 조회/생성 (버스 1:1)
-                RouteChilwonEntity route = routeChilwonRepository.findByBus(bus);
-                if (route == null && startLocation != null && endLocation != null) {
-                    route = new RouteChilwonEntity(bus, startLocation, endLocation);
-                    routeChilwonRepository.save(route);
-                    System.out.println("Route 생성: bus=" + busNumber
-                            + ", 출발=" + startLocation.getStopName()
-                            + ", 종점=" + endLocation.getStopName());
-                }
-
-                // route가 null이면 시간 저장 불가 -> 스킵
-                if (route == null) {
-                    System.out.println("Route가 null → 시간 저장 스킵 (rowIndex=" + rowIndex + ")");
+                if (startLocation == null || endLocation == null) {
+                    System.out.println("startLocation/endLocation null -> 스킵 (rowIndex=" + rowIndex + ")");
                     continue;
                 }
 
-                // 5) 시간 파싱 -> BusTimeEntity 저장
-                parseColumns1To18(row, bus, route, stopMap);
-                parseColumns19Plus(row, bus, route);
+                // 🔴 매 행마다 새 RouteChilwonEntity 생성
+                RouteChilwonEntity route = new RouteChilwonEntity(bus, startLocation, endLocation);
+
+                routeChilwonRepository.save(route);
+
+                // 3) 열 1..18 & 열 19..마지막 열에서 모든 시간 수집
+                List<LocalTime> allTimes = new ArrayList<>();
+                allTimes.addAll(parseColumns1To18(row, bus, route, stopMap));
+                allTimes.addAll(parseColumns19Plus(row, bus, route));
+
+                // 출발 시각 = 최소 시간
+                LocalTime startTime = findMinTime(allTimes);
+                // 종점 시각 = 최대 시간
+                LocalTime endTime = findMaxTime(allTimes);
+
+                route.setStartLocationTime(startTime);
+                route.setEndLocationTime(endTime);
             }
 
             System.out.println("엑셀 데이터 저장 완료!");
@@ -125,11 +135,9 @@ public class ExcelToCilwonService {
      * "처음 발견한 시간" (열 1..18) -> Row 5 헤더(stopMap)의 정류장을 출발점으로 사용
      */
     private StopEntity findStartLocationByFirstTime(Row row, Map<Integer, StopEntity> stopMap) {
-        // 열 1..18 사이에서 첫 "HH:mm" 발견
         for (int colIndex = 1; colIndex <= 18; colIndex++) {
             String value = extractCellValue(row.getCell(colIndex));
             if (value.matches("\\d{1,2}:\\d{2}")) {
-                // 이 열이 첫 시간 -> Row 5 헤더의 정류장이 출발점
                 return stopMap.get(colIndex);
             }
         }
@@ -154,9 +162,15 @@ public class ExcelToCilwonService {
     }
 
     /**
-     * 열 1..18: Row 5 헤더로 정류장 매핑 -> 시간 저장
+     * 열 1..18에서 발견된 모든 시간을 반환 & BusTimeToChilwonEntity 저장
      */
-    private void parseColumns1To18(Row row, BusEntity bus, RouteChilwonEntity route, Map<Integer, StopEntity> stopMap) {
+    private List<LocalTime> parseColumns1To18(Row row,
+                                              BusEntity bus,
+                                              RouteChilwonEntity route,
+                                              Map<Integer, StopEntity> stopMap) {
+
+        List<LocalTime> times = new ArrayList<>();
+
         for (int colIndex = 1; colIndex <= 18; colIndex++) {
             StopEntity stop = stopMap.get(colIndex);
             if (stop == null) continue;
@@ -164,6 +178,7 @@ public class ExcelToCilwonService {
             String timeValue = extractCellValue(row.getCell(colIndex));
             if (timeValue.matches("\\d{1,2}:\\d{2}")) {
                 LocalTime arrivalTime = LocalTime.parse(timeValue);
+                times.add(arrivalTime);
 
                 // 중복 체크
                 BusTimeToChilwonEntity existing =
@@ -174,25 +189,31 @@ public class ExcelToCilwonService {
                 }
             }
         }
+        return times;
     }
 
     /**
      * 열 19+ : "정류장 -> 시간" 형태로 매핑
+     * 모든 시간을 반환 & BusTimeToChilwonEntity 저장
      */
-    private void parseColumns19Plus(Row row, BusEntity bus, RouteChilwonEntity route) {
+    private List<LocalTime> parseColumns19Plus(Row row, BusEntity bus, RouteChilwonEntity route) {
+        List<LocalTime> times = new ArrayList<>();
+
         int lastCol = row.getLastCellNum() - 1;
         StopEntity currentStop = null;
+
         for (int colIndex = 19; colIndex <= lastCol; colIndex++) {
             String val = extractCellValue(row.getCell(colIndex));
             if (val.isEmpty()) continue;
 
-            // 시간이면 -> currentStop에 BusTimeEntity 저장
             if (val.matches("\\d{1,2}:\\d{2}")) {
+                // 시간이면
                 if (currentStop != null) {
                     LocalTime arrivalTime = LocalTime.parse(val);
-                    BusTimeToChilwonEntity existing = busTimeToChilwonRepository.findByBusAndStopAndRouteAndArrivalTime(
-                            bus, currentStop, route, arrivalTime
-                    );
+                    times.add(arrivalTime);
+
+                    BusTimeToChilwonEntity existing =
+                            busTimeToChilwonRepository.findByBusAndStopAndRouteAndArrivalTime(bus, currentStop, route, arrivalTime);
                     if (existing == null) {
                         BusTimeToChilwonEntity busTime = new BusTimeToChilwonEntity(bus, currentStop, route, arrivalTime);
                         busTimeToChilwonRepository.save(busTime);
@@ -209,6 +230,23 @@ public class ExcelToCilwonService {
                 currentStop = foundStop;
             }
         }
+        return times;
+    }
+
+    /**
+     * 가장 이른 시간(최소) 찾기
+     */
+    private LocalTime findMinTime(List<LocalTime> times) {
+        if (times == null || times.isEmpty()) return null;
+        return Collections.min(times);
+    }
+
+    /**
+     * 가장 늦은 시간(최대) 찾기
+     */
+    private LocalTime findMaxTime(List<LocalTime> times) {
+        if (times == null || times.isEmpty()) return null;
+        return Collections.max(times);
     }
 
     /**

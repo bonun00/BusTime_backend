@@ -1,13 +1,9 @@
-package bonun.bustime.repository;
+package bonun.bustime.repository.ToMasan;
 
 import bonun.bustime.entity.BusEntity;
-import bonun.bustime.entity.RouteMasanEntity;
+import bonun.bustime.entity.ToMasan.RouteMasanEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-
-import java.util.List;
 
 @Repository
 public interface RouteMasanRepository extends JpaRepository<RouteMasanEntity, Long> {
