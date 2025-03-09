@@ -60,7 +60,7 @@ public interface BusTimeToChilwonRepository extends JpaRepository<BusTimeToChilw
     WHERE bus.busNumber = :busNumber
        AND route.id = (
           SELECT MIN(r.id)
-          FROM RouteMasanEntity r
+          FROM RouteChilwonEntity r
           WHERE r.bus.busNumber = :busNumber
       )
        AND stop.stopName <> route.endLocation.stopName

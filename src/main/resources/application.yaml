@@ -1,8 +1,6 @@
-# 서버 포트 설정
 server:
-  port: 1111
+  port: 1111  # 서버 포트 설정
 
-# 데이터베이스 연동 설정
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -12,16 +10,25 @@ spring:
   thymeleaf:
     cache: false
 
-  # Spring Data JPA 설정
+  # ✅ WebSocket 설정 추가
+  websocket:
+    enabled: true
+
+  # ✅ STOMP 메시징 활성화
+  messaging:
+    stomp:
+      broker: "/topic"   # STOMP 메시지를 전달할 브로커 설정
+      application-destination-prefix: "/app"  # 클라이언트 요청 URL prefix
+
+  # ✅ Spring Data JPA 설정
   jpa:
     database-platform: org.hibernate.dialect.MySQL8Dialect
     open-in-view: false
     show-sql: false
     hibernate:
-      ddl-auto: create
+      ddl-auto: update  # 기존 데이터 유지 (create -> update)
 
-
-# 🔹 스케줄러 활성화
+# ✅ 스케줄러 활성화
 management:
   endpoint:
     scheduling:
