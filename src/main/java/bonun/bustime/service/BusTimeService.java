@@ -1,11 +1,12 @@
 package bonun.bustime.service;
 
-import bonun.bustime.DTO.BusTimeDTO;
-import bonun.bustime.entity.BusTimeToChilwonEntity;
-import bonun.bustime.entity.BusTimeToMasanEntity;
+import bonun.bustime.dto.BusTimeDTO;
+import bonun.bustime.entity.ToChilwon.BusTimeToChilwonEntity;
+import bonun.bustime.entity.ToMasan.BusTimeToMasanEntity;
 import bonun.bustime.entity.StopEntity;
-import bonun.bustime.repository.BusTimeToChilwonRepository;
-import bonun.bustime.repository.BusTimeToMasanRepository;
+import bonun.bustime.repository.ToChilwon.BusTimeToChilwonRepository;
+import bonun.bustime.repository.ToMasan.BusTimeToMasanRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,14 +14,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class BusTimeService {
 
     private final BusTimeToChilwonRepository busTimeToChilwonRepository;
     private final BusTimeToMasanRepository busTimeToMasanRepository;
-    public BusTimeService(BusTimeToChilwonRepository busTimeToChilwonRepository, BusTimeToMasanRepository busTimeToMasanRepository) {
-        this.busTimeToChilwonRepository = busTimeToChilwonRepository;
-        this.busTimeToMasanRepository = busTimeToMasanRepository;
-    }
 
 
     @Transactional(readOnly = true)

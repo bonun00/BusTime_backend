@@ -7,4 +7,8 @@ public interface StopRepository extends JpaRepository<StopEntity, Long> {
 
     StopEntity findByStopName(String stopName);
 
+
+
+
+
 }

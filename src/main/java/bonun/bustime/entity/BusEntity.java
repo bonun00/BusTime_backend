@@ -1,5 +1,8 @@
 package bonun.bustime.entity;
+
+import bonun.bustime.api.entity.RouteIdEntity;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -15,5 +18,4 @@ public class BusEntity {
     private String busNumber;
 
 
-    // 추가 필드나 getter, setter는 필요에 따라 추가합니다.
 }
