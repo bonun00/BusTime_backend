@@ -28,6 +28,8 @@ public interface BusTimeToChilwonRepository extends JpaRepository<BusTimeToChilw
     ORDER BY bte.arrivalTime ASC
 """)
     List<BusTimeToChilwonEntity> findByBus_BusNumberContainingAndStop_StopNameContaining(String busNumber, String stopName);
+
+
 //    List<BusTimeEntity> findByBus_BusNumberAndStop_StopName(String busNumber, String stopName);
 // 이미 존재하는 (버스, 정류장, 노선, 도착시간)을 검색하는 메서드
     BusTimeToChilwonEntity findByBusAndStopAndRouteAndArrivalTime(
@@ -52,21 +54,25 @@ public interface BusTimeToChilwonRepository extends JpaRepository<BusTimeToChilw
      * 특정 버스번호의 전체 운행 노선(정류장 + 도착시간)을 시간 순서대로 조회
      */
     @Query("""
-    SELECT DISTINCT bte
+     SELECT DISTINCT bte
     FROM BusTimeToChilwonEntity bte
     JOIN FETCH bte.bus bus
     JOIN FETCH bte.stop stop
     JOIN FETCH bte.route route
     WHERE bus.busNumber = :busNumber
-       AND route.id = (
-          SELECT MIN(r.id)
-          FROM RouteChilwonEntity r
+      AND route.id IN (
+          SELECT DISTINCT r.route.id
+          FROM BusTimeToChilwonEntity r
           WHERE r.bus.busNumber = :busNumber
+            AND r.arrivalTime = :arrivalTime
       )
-       AND stop.stopName <> route.endLocation.stopName
+      AND stop.stopName <> route.endLocation.stopName
     ORDER BY bte.arrivalTime ASC
 """)
-    List<BusTimeToChilwonEntity> findAllByBusNumber(@Param("busNumber") String busNumber);
+    List<BusTimeToChilwonEntity> findAllByBusNumber(
+            @Param("busNumber") String busNumber,
+            @Param("arrivalTime")LocalTime arrivalTime
+    );
 
 
 

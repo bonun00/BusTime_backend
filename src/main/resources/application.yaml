@@ -26,7 +26,7 @@ spring:
     open-in-view: false
     show-sql: false
     hibernate:
-      ddl-auto: update  # 기존 데이터 유지 (create -> update)
+      ddl-auto: create  # 기존 데이터 유지 (create -> update)
 
 # ✅ 스케줄러 활성화
 management:

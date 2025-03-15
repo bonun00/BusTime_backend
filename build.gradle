@@ -30,7 +30,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-webflux'
 	// ✅ STOMP 프로토콜 메시징
 //	implementation 'org.springframework.boot:spring-boot-starter-messaging'
-	implementation 'org.springframework:spring-messaging:6.2.3'
+//	implementation 'org.springframework:spring-messaging:6.2.3'
 	implementation 'org.springframework:spring-core:6.2.3'
 
 	// ✅ JSON 처리 (Gson + Jackson)

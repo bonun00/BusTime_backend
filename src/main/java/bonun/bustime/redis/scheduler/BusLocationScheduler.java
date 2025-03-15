@@ -22,7 +22,7 @@ public class BusLocationScheduler {
     /**
      * 1분마다 현재 운행 중인 마산 & 칠원 노선들의 실시간 위치 조회
      */
-    @Scheduled(fixedRate = 60000)
+    @Scheduled(fixedRate = 1000)
     public void updateActiveBusLocations() {
         System.out.println("🔄 스케줄링 시작: 현재 운행 중인 노선 위치 조회");
 
@@ -59,7 +59,7 @@ public class BusLocationScheduler {
             busLocationCache.saveLocations(category, routeId, locations);
 
             // 🚀 차량 번호까지 포함하여 출력
-            System.out.println("category=" + category + ", routeId=" + routeId +
+            System.out.println(" \uD83D\uDE80\uD83D\uDE80 category=" + category + ", routeId=" + routeId +
                     " -> " + locations.size() + "대 버스 위치 저장 완료" +
                     " | 차량 번호: " + vehicleNumbers);
         }

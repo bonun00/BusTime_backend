@@ -52,15 +52,16 @@ public interface BusTimeToMasanRepository extends JpaRepository<BusTimeToMasanEn
     JOIN FETCH bte.stop stop
     JOIN FETCH bte.route route
     WHERE bus.busNumber = :busNumber
-      AND route.id = (
-          SELECT MIN(r.id)
-          FROM RouteMasanEntity r
+      AND route.id IN (
+          SELECT DISTINCT r.route.id
+          FROM BusTimeToMasanEntity r
           WHERE r.bus.busNumber = :busNumber
+            AND r.arrivalTime = :arrivalTime
       )
       AND stop.stopName <> route.endLocation.stopName
     ORDER BY bte.arrivalTime ASC
 """)
-    List<BusTimeToMasanEntity> findAllByBusNumber(@Param("busNumber") String busNumber);
-
-
+    List<BusTimeToMasanEntity> findAllByBusNumber(
+            @Param("busNumber") String busNumber,
+            @Param("arrivalTime") LocalTime arrivalTime);
 }

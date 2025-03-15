@@ -10,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -79,35 +81,35 @@ public class BusTimeService {
      * 2) DTO로 변환
      * 3) 필요하다면 stopName으로 필터링 or 하이라이트 가능
      */
-    public List<BusTimeDTO> getBusChilwonRouteTimes(String busNumber) {
-        // 1) DB 조회: 해당 버스번호의 모든 정류장 운행 시간
+    public List<BusTimeDTO> getBusChilwonRouteTimes(String busNumber,String time) {
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+        LocalTime localTime = LocalTime.parse(time, formatter);
         List<BusTimeToChilwonEntity> busTimes =
-                busTimeToChilwonRepository.findAllByBusNumber(busNumber);
+                busTimeToChilwonRepository.findAllByBusNumber(busNumber,localTime);
 
         // 2) DTO 변환
         List<BusTimeDTO> routeList = busTimes.stream()
                 .map(bte -> new BusTimeDTO(
                         bte.getBus().getBusNumber(),
                         bte.getStop().getStopName(),
-                        // 예: 종점 이름을 routeName으로 삼는다거나, 필요에 따라
                         bte.getRoute().getEndLocation().getStopName(),
                         bte.getArrivalTime()
                 ))
                 .collect(Collectors.toList());
 
-        // 3) stopName을 추가로 활용(필요시)
-        // 예: stopName이 비어있지 않다면, 그 정류장을 상위로 표시/필터
-        // 여기서는 단순히 "전체 노선" 반환
         return routeList;
     }
 
 
-    public List<BusTimeDTO> getBusMasanRouteTimes(String busNumber) {
-        // 1) DB 조회: 해당 버스번호의 모든 정류장 운행 시간
-        List<BusTimeToMasanEntity> busTimes =
-                busTimeToMasanRepository.findAllByBusNumber(busNumber);
+    public List<BusTimeDTO> getBusMasanRouteTimes(String busNumber, String time) {
 
-        // 2) DTO 변환
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+        LocalTime localTime = LocalTime.parse(time, formatter);
+        List<BusTimeToMasanEntity> busTimes =
+                busTimeToMasanRepository.findAllByBusNumber(busNumber,localTime);
+
         List<BusTimeDTO> routeList = busTimes.stream()
                 .map(bte -> new BusTimeDTO(
                         bte.getBus().getBusNumber(),
@@ -118,9 +120,6 @@ public class BusTimeService {
                 ))
                 .collect(Collectors.toList());
 
-        // 3) stopName을 추가로 활용(필요시)
-        // 예: stopName이 비어있지 않다면, 그 정류장을 상위로 표시/필터
-        // 여기서는 단순히 "전체 노선" 반환
         return routeList;
     }
 

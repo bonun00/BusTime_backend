@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalTime;
 import java.util.List;
 
 @RestController
@@ -60,16 +61,19 @@ public class BusTimeController {
 
     @GetMapping("/chilwon-route")
     public List<BusTimeDTO> getChilwonBusRoute(
-            @RequestParam("busNumber") String busNumber
+            @RequestParam("busNumber") String busNumber,
+            @RequestParam("arriveTime") String arriveTime
     ) {
-        return busTimeService.getBusChilwonRouteTimes(busNumber);
+        return busTimeService.getBusChilwonRouteTimes(busNumber, arriveTime);
     }
 
     @GetMapping("/masan-route")
     public List<BusTimeDTO> getMasanBusRoute(
-            @RequestParam("busNumber") String busNumber
+            @RequestParam("busNumber") String busNumber,
+            @RequestParam("arriveTime") String arriveTime
     ) {
-        return busTimeService.getBusMasanRouteTimes(busNumber);
+        System.out.println(arriveTime);
+        return busTimeService.getBusMasanRouteTimes(busNumber,arriveTime);
     }
 
 
