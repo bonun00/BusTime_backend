@@ -14,11 +14,6 @@ spring:
   websocket:
     enabled: true
 
-  # ✅ STOMP 메시징 활성화
-  messaging:
-    stomp:
-      broker: "/topic"   # STOMP 메시지를 전달할 브로커 설정
-      application-destination-prefix: "/app"  # 클라이언트 요청 URL prefix
 
   # ✅ Spring Data JPA 설정
   jpa:
@@ -26,10 +21,31 @@ spring:
     open-in-view: false
     show-sql: false
     hibernate:
-      ddl-auto: create  # 기존 데이터 유지 (create -> update)
+      ddl-auto: create
 
 # ✅ 스케줄러 활성화
 management:
   endpoint:
     scheduling:
       enabled: true
+
+naver:
+  api:
+    client-id: 2klgdl5i6l
+    client-secret: Kta9HdjiBmVF0XZs1dETRbdXcU77v0Me0UsKIaJ7
+public-api:
+  service-key: tNbsVnMlaZ7jFtVUDgBJTlDNg%2FVFa7R7XUYyegbItZY61%2FL%2FSgsl%2BFUP39TKdewZ5gwiPvYv3oaL6Zx8fv5iBg%3D%3D
+
+bus:
+  api:
+    location:
+      service-key: tNbsVnMlaZ7jFtVUDgBJTlDNg%2FVFa7R7XUYyegbItZY61%2FL%2FSgsl%2BFUP39TKdewZ5gwiPvYv3oaL6Zx8fv5iBg%3D%3D
+      base-url: https://apis.data.go.kr/1613000/BusLcInfoInqireService/getRouteAcctoBusLcList
+      city-code: 38320
+    service-key: tNbsVnMlaZ7jFtVUDgBJTlDNg%2FVFa7R7XUYyegbItZY61%2FL%2FSgsl%2BFUP39TKdewZ5gwiPvYv3oaL6Zx8fv5iBg%3D%3D
+    api-url: https://apis.data.go.kr/1613000/BusRouteInfoInqireService/getRouteNoList
+    city-code: 38320
+    page-no: 1
+    num-of-rows: 200
+  routes:
+    to-fetch: 113,250

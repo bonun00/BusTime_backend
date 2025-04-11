@@ -1,58 +1,69 @@
 package bonun.bustime.websocket;
 
-import bonun.bustime.api.service.ActiveRouteService;
-import bonun.bustime.redis.cache.BusLocationCache;
-import bonun.bustime.dto.BusLocationDTO;
+import bonun.bustime.external.bus.service.BusLocationService;
+import bonun.bustime.service.ActiveRouteService;
+import bonun.bustime.external.bus.dto.BusLocationDTO;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
 
 import java.util.ArrayList;
 import java.util.List;
-
+import java.util.concurrent.ConcurrentHashMap;
+@Slf4j
 @Controller
 @RequiredArgsConstructor
 public class BusLocationWebSocketHandler {
 
-    private final BusLocationCache busLocationCache;
+    private final BusLocationService busLocationService;
     private final ActiveRouteService activeRouteService;
+    private final SimpMessagingTemplate messagingTemplate;
 
-    /**
-     * ✅ 클라이언트가 "/app/masan"으로 요청하면 실시간 버스 데이터를 반환
-     */
+    private final ConcurrentHashMap<String, List<BusLocationDTO>> cachedLocations = new ConcurrentHashMap<>();
+
+    @Scheduled(initialDelay = 0, fixedDelay = Long.MAX_VALUE)
+    public void init() {
+        updateCachedData();
+    }
+
     @MessageMapping("/masan")
     @SendTo("/topic/masan")
     public List<BusLocationDTO> sendMasanBusLocations() {
-        return getBusLocations("masan");
+        List<BusLocationDTO> result = cachedLocations.getOrDefault("masan", getBusLocations("masan"));
+        log.info("📥 [Client 요청] /app/masan → /topic/masan 전송: {}대", result.size());
+        return result;
+//        return cachedLocations.getOrDefault("masan", getBusLocations("masan"));
     }
 
-    /**
-     * ✅ 클라이언트가 "/app/chilwon"으로 요청하면 실시간 버스 데이터를 반환
-     */
     @MessageMapping("/chilwon")
     @SendTo("/topic/chilwon")
     public List<BusLocationDTO> sendChilwonBusLocations() {
-        return getBusLocations("chilwon");
+        return cachedLocations.getOrDefault("chilwon", getBusLocations("chilwon"));
     }
 
-    /**
-     * ✅ 60초마다 자동으로 버스 위치 정보를 클라이언트에게 전송
-     */
-    @Scheduled(fixedRate = 70000) // 60초마다 실행
+    @Scheduled(fixedRate = 60000)
     public void updateBusLocations() {
-        List<BusLocationDTO> masanData = getBusLocations("masan");
-        List<BusLocationDTO> chilwonData = getBusLocations("chilwon");
+        updateCachedData();
 
-        // 웹소켓을 통해 데이터 전송
-        WebSocketSender.sendToTopic("/topic/masan", masanData);
-        WebSocketSender.sendToTopic("/topic/chilwon", chilwonData);
+        List<BusLocationDTO> masan = cachedLocations.get("masan");
+        List<BusLocationDTO> chilwon = cachedLocations.get("chilwon");
+
+        log.info("📤 [WebSocket 전송] 🧭 마산 {}대 → /topic/masan", masan != null ? masan.size() : 0);
+        log.info("📤 [WebSocket 전송] 🧭 칠원 {}대 → /topic/chilwon", chilwon != null ? chilwon.size() : 0);
+
+        messagingTemplate.convertAndSend("/topic/masan", cachedLocations.get("masan"));
+        messagingTemplate.convertAndSend("/topic/chilwon", cachedLocations.get("chilwon"));
     }
 
-    /**
-     * ✅ Redis에서 버스 위치 정보 가져오기
-     */
+    private void updateCachedData() {
+        cachedLocations.put("masan", getBusLocations("masan"));
+        cachedLocations.put("chilwon", getBusLocations("chilwon"));
+    }
+
     private List<BusLocationDTO> getBusLocations(String category) {
         List<String> activeRouteIds = category.equals("masan") ?
                 activeRouteService.getActiveMasanRouteIds() :
@@ -60,9 +71,8 @@ public class BusLocationWebSocketHandler {
 
         List<BusLocationDTO> allBusLocations = new ArrayList<>();
         for (String routeId : activeRouteIds) {
-            List<BusLocationDTO> locations = category.equals("masan") ?
-                    busLocationCache.getMasanLocations(routeId) :
-                    busLocationCache.getChilwonLocations(routeId);
+            log.warn("🚨 조회 지역{}", category);
+            List<BusLocationDTO> locations = busLocationService.getBusLocations(routeId);
 
             allBusLocations.addAll(locations);
         }

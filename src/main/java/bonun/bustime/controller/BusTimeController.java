@@ -7,7 +7,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalTime;
 import java.util.List;
 
 @RestController
@@ -19,7 +18,7 @@ public class BusTimeController {
 
 
 
-    @GetMapping("/Masan-times")
+    @GetMapping("/masan-times")
     public ResponseEntity<List<BusTimeDTO>> getArrivalMasanTimes(
             @RequestParam("busNumber") String busNumber,
             @RequestParam("stopName") String stopName) {

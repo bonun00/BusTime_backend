@@ -1,4 +1,4 @@
-package bonun.bustime.api.entity;
+package bonun.bustime.external.bus.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -33,5 +33,6 @@ public class RouteIdEntity {
     private String endVehicleTime;    // "1840" 등
 
     // 방향 ("마산", "창원", "기타")
+    @Column(name = "direction")
     private String direction;
 }

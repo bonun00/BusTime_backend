@@ -1,18 +1,20 @@
-package bonun.bustime.api.service;
+package bonun.bustime.service;
 
-import bonun.bustime.api.entity.RouteIdEntity;
+import bonun.bustime.external.bus.entity.RouteIdEntity;
 import bonun.bustime.entity.ToChilwon.RouteChilwonEntity;
 import bonun.bustime.entity.ToMasan.RouteMasanEntity;
-import bonun.bustime.api.repository.RouteIdRepository;
+import bonun.bustime.external.bus.repository.RouteIdRepository;
 import bonun.bustime.repository.ToChilwon.RouteChilwonRepository;
 import bonun.bustime.repository.ToMasan.RouteMasanRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ActiveRouteService {
@@ -21,51 +23,41 @@ public class ActiveRouteService {
     private final RouteMasanRepository routeMasanRepository;
     private final RouteIdRepository routeIdRepository;
 
+    // 방향 상수
+    private static final String DIRECTION_CHILWON = "칠원";
+    private static final String DIRECTION_MASAN = "마산";
+
     /**
-     * 현재 운행 중인 칠원 노선들의 "routeId"를 반환 (디버깅: 출발 및 종점 시간)
+     * 현재 운행 중인 칠원 노선들의 "routeId"를 반환
      */
     public List<String> getActiveChilwonRouteIds() {
         LocalTime now = LocalTime.now();
         List<String> activeRouteIds = new ArrayList<>();
+        List<RouteChilwonEntity> chilwonRoutes = routeChilwonRepository.findAll();
 
-        // 1) 칠원 노선 전체 조회
-        List<RouteChilwonEntity> chilwonAll = routeChilwonRepository.findAll();
-        for (RouteChilwonEntity route : chilwonAll) {
-
-
+        for (RouteChilwonEntity route : chilwonRoutes) {
             if (isInOperation(route.getStartLocationTime(), route.getEndLocationTime(), now)) {
-                System.out.println("   ✅ 현재 운행 중: " + route.getBus().getBusNumber());
-                System.out.println("🔎 [칠원] 버스 번호: " + route.getBus().getBusNumber());
-                System.out.println("   ▶ 출발 시간: " + route.getStartLocationTime());
-                System.out.println("   ▶ 종점 시간: " + route.getEndLocationTime());
 
-
-
-                addMatchingRouteId(route.getBus().getBusNumber(), activeRouteIds);
+                addMatchingRouteId(route.getBus().getBusNumber(), activeRouteIds, DIRECTION_CHILWON);
             }
         }
         return activeRouteIds;
     }
 
     /**
-     * 현재 운행 중인 마산 노선들의 "routeId"를 반환 (디버깅: 출발 및 종점 시간)
+     * 현재 운행 중인 마산 노선들의 "routeId"를 반환
      */
     public List<String> getActiveMasanRouteIds() {
         LocalTime now = LocalTime.now();
         List<String> activeRouteIds = new ArrayList<>();
+        List<RouteMasanEntity> masanRoutes = routeMasanRepository.findAll();
 
-        // 2) 마산 노선 전체 조회
-        List<RouteMasanEntity> masanAll = routeMasanRepository.findAll();
-        for (RouteMasanEntity route : masanAll) {
+        for (RouteMasanEntity route : masanRoutes) {
             if (isInOperation(route.getStartLocationTime(), route.getEndLocationTime(), now)) {
-                System.out.println("   ✅ 현재 운행 중: " + route.getBus().getBusNumber());
-                System.out.println("🔎 [마산] 버스 번호: " + route.getBus().getBusNumber());
-                System.out.println("   ▶ 출발 시간: " + route.getStartLocationTime());
-                System.out.println("   ▶ 종점 시간: " + route.getEndLocationTime());
-                addMatchingRouteId(route.getBus().getBusNumber(), activeRouteIds);
+
+                addMatchingRouteId(route.getBus().getBusNumber(), activeRouteIds, DIRECTION_MASAN);
             }
         }
-
         return activeRouteIds;
     }
 
@@ -80,9 +72,11 @@ public class ActiveRouteService {
     /**
      * busNumber와 일치하는 RouteId를 찾아서 리스트에 추가
      */
-    private void addMatchingRouteId(String busNumber, List<String> activeRouteIds) {
+    private void addMatchingRouteId(String busNumber, List<String> activeRouteIds, String direction) {
         if (busNumber == null) return;
-        List<RouteIdEntity> matchingRoutes = routeIdRepository.findByRouteNo(busNumber);
+
+        List<RouteIdEntity> matchingRoutes = routeIdRepository.findByDirectionAndRouteNo(direction, busNumber);
+        log.info("방향: {}, 버스 번호: {}에 대한 매칭 노선 수: {}", direction, busNumber, matchingRoutes.size());
 
         for (RouteIdEntity route : matchingRoutes) {
             activeRouteIds.add(route.getRouteId());

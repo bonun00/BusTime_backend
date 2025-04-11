@@ -1,5 +1,6 @@
 package bonun.bustime.repository.ToChilwon;
 
+import bonun.bustime.dto.TimePairDTO;
 import bonun.bustime.entity.BusEntity;
 import bonun.bustime.entity.ToChilwon.BusTimeToChilwonEntity;
 import bonun.bustime.entity.ToChilwon.RouteChilwonEntity;
@@ -11,10 +12,13 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 
 public interface BusTimeToChilwonRepository extends JpaRepository<BusTimeToChilwonEntity, Long> {
+
+
 
     // 특정 버스번호와 정류장이름에 해당하는 스케줄을 가져오는 쿼리 메서드
     @Query("""
@@ -75,6 +79,41 @@ public interface BusTimeToChilwonRepository extends JpaRepository<BusTimeToChilw
     );
 
 
+
+
+    /**
+     * (B) 출발/도착 정류장으로 칠원 노선 시간표 조회
+     *     - 출발 정류장: departureStop
+     *     - 도착 정류장: arrivalStop
+     *
+     *  예를 들어, 'route' 테이블에 'endLocation' 정보가 있으면,
+     *  'endLocation.stopName' == arrivalStop 인 노선만 필터링 가능.
+     *
+     *  혹은 아래처럼 단순히 "출발 정류장 == X" & "도착 정류장 == Y" 로직을
+     *  어떻게 구성할지에 따라 달라질 수 있습니다.
+     */
+    @Query("""
+SELECT new bonun.bustime.dto.TimePairDTO(
+  b1.arrivalTime,
+  b2.arrivalTime,
+   bus.busNumber
+)
+FROM BusTimeToChilwonEntity b1
+  JOIN b1.stop s1
+  JOIN b1.route r
+  JOIN b1.bus bus
+  JOIN BusTimeToChilwonEntity b2 ON b2.route = r
+  JOIN b2.stop s2
+  JOIN b2.bus bus2
+WHERE s1.stopName = :departureStop
+  AND s2.stopName = :arrivalStop
+  AND b1.arrivalTime < b2.arrivalTime
+ORDER BY b1.arrivalTime
+""")
+    List<TimePairDTO> findChilwonSchedules(
+            @Param("departureStop") String departureStop,
+            @Param("arrivalStop") String arrivalStop
+    );
 
 
 
