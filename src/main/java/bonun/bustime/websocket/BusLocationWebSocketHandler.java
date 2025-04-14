@@ -36,7 +36,7 @@ public class BusLocationWebSocketHandler {
         List<BusLocationDTO> result = cachedLocations.getOrDefault("masan", getBusLocations("masan"));
         log.info("📥 [Client 요청] /app/masan → /topic/masan 전송: {}대", result.size());
         return result;
-//        return cachedLocations.getOrDefault("masan", getBusLocations("masan"));
+
     }
 
     @MessageMapping("/chilwon")

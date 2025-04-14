@@ -23,5 +23,4 @@ public class StopEntity {
 
     private Double longitude;
 
-    // 추가 필드나 getter, setter는 필요에 따라 추가합니다.
 }

@@ -16,7 +16,8 @@ import java.util.List;
 @RequestMapping("/bus")
 @RequiredArgsConstructor
 public class BusRouteController {
-    //TODO 단일책임원칙에따라 서비스계층 DTO
+
+
     private final BusStopRepository routePathRepository;
 
     @GetMapping("/path")

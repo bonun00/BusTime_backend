@@ -1,4 +1,4 @@
-package bonun.bustime.entity.ToMasan;
+package bonun.bustime.entity.tomasan;
 
 import bonun.bustime.entity.BusEntity;
 import bonun.bustime.entity.StopEntity;

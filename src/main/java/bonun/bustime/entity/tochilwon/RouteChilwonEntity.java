@@ -1,4 +1,4 @@
-package bonun.bustime.entity.ToChilwon;
+package bonun.bustime.entity.tochilwon;
 
 import bonun.bustime.entity.BusEntity;
 import bonun.bustime.entity.StopEntity;

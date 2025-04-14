@@ -12,7 +12,6 @@ import org.springframework.context.annotation.Configuration;
 
 
 @Slf4j
-//@Component
 @Configuration
 @RequiredArgsConstructor
 public class ExcelDataLoader {

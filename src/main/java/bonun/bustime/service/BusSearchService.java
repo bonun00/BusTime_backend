@@ -1,18 +1,12 @@
 package bonun.bustime.service;
 
 import bonun.bustime.dto.TimePairDTO;
-import bonun.bustime.entity.StopEntity;
-import bonun.bustime.entity.ToChilwon.BusTimeToChilwonEntity;
-import bonun.bustime.entity.ToMasan.BusTimeToMasanEntity;
-import bonun.bustime.repository.ToChilwon.BusTimeToChilwonRepository;
-import bonun.bustime.repository.ToMasan.BusTimeToMasanRepository;
+import bonun.bustime.repository.tochilwon.BusTimeToChilwonRepository;
+import bonun.bustime.repository.tomasan.BusTimeToMasanRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.ArrayList;
-import java.util.Map;
 
 @Service
 @RequiredArgsConstructor

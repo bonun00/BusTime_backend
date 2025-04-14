@@ -23,20 +23,15 @@ public class BusLocationParser {
     public List<BusLocationDTO> parseBusLocations(ResponseEntity<String> response) {
         List<BusLocationDTO> resultList = new ArrayList<>();
         try {
-            // JSON 파싱
-            String respBody = response.getBody();
-            if (respBody == null || respBody.isEmpty()) {
-                log.warn("API 응답 본문이 비어있습니다.");
+            String respBody = Optional.ofNullable(response.getBody())
+                    .map(String::trim)
+                    .filter(body -> !body.isEmpty() && body.startsWith("{"))
+                    .orElse(null);
+
+            if (respBody == null) {
+                log.warn("API 응답이 비정상입니다.");
                 return resultList;
             }
-
-            // 유효한 JSON 형식인지 확인
-            respBody = respBody.trim();
-            if (!respBody.startsWith("{")) {
-                log.warn("유효하지 않은 JSON 응답: {}", respBody);
-                return resultList;
-            }
-
             try {
                 JSONParser parser = new JSONParser();
                 JSONObject root = (JSONObject) parser.parse(respBody);

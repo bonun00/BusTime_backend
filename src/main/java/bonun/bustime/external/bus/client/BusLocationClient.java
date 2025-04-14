@@ -34,7 +34,6 @@ public class BusLocationClient {
      */
     public ResponseEntity<String> getBusLocationByRouteId(String routeId) {
         URI uri = buildLocationApiUri(routeId);
-//        log.info("🚍 버스 위치 조회 API 호출 URI = {}", uri);
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Accept", "application/json");

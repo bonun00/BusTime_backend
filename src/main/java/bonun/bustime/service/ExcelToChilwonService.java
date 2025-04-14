@@ -2,12 +2,12 @@ package bonun.bustime.service;
 
 import bonun.bustime.entity.BusEntity;
 import bonun.bustime.entity.StopEntity;
-import bonun.bustime.entity.ToChilwon.BusTimeToChilwonEntity;
-import bonun.bustime.entity.ToChilwon.RouteChilwonEntity;
+import bonun.bustime.entity.tochilwon.BusTimeToChilwonEntity;
+import bonun.bustime.entity.tochilwon.RouteChilwonEntity;
 import bonun.bustime.repository.BusRepository;
 import bonun.bustime.repository.StopRepository;
-import bonun.bustime.repository.ToChilwon.BusTimeToChilwonRepository;
-import bonun.bustime.repository.ToChilwon.RouteChilwonRepository;
+import bonun.bustime.repository.tochilwon.BusTimeToChilwonRepository;
+import bonun.bustime.repository.tochilwon.RouteChilwonRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.*;
@@ -119,24 +119,6 @@ public class ExcelToChilwonService {
             RouteChilwonEntity route = new RouteChilwonEntity(bus, startLocation, endLocation);
 
             routeChilwonRepository.save(route);
-
-
-            // 기존 노선 존재 여부 확인
-//            List<RouteChilwonEntity> existingRoute = routeChilwonRepository
-//                    .findByBusIdAndStartLocationIdAndEndLocationId(
-//                            bus.getId(), startLocation.getId(), endLocation.getId()
-//                    );
-//
-//            RouteChilwonEntity route;
-
-//            if (!existingRoute.isEmpty()) {
-//                continue;
-//            } else {
-//                route = new RouteChilwonEntity(bus, startLocation, endLocation);
-//                routeChilwonRepository.save(route);
-//                log.debug("새 노선 저장: 버스={}, 출발={}, 도착={}", bus.getBusNumber(), startLocation.getStopName(), endLocation.getStopName());
-//            }
-
 
             // 시간표 처리
             List<LocalTime> allTimes = new ArrayList<>();

@@ -1,4 +1,4 @@
-package bonun.bustime.entity.ToChilwon;
+package bonun.bustime.entity.tomasan;
 
 import bonun.bustime.entity.BusEntity;
 import bonun.bustime.entity.StopEntity;
@@ -13,7 +13,7 @@ import java.time.LocalTime;
 @ToString(exclude = {"bus", "stop", "route"})
 @NoArgsConstructor // JPA 기본 생성자
 @AllArgsConstructor
-public class BusTimeToChilwonEntity {
+public class BusTimeToMasanEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,12 +28,12 @@ public class BusTimeToChilwonEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "route_id", nullable = false)
-    private RouteChilwonEntity route; // 노선 정보 추가
+    private RouteMasanEntity route; // 노선 정보 추가
 
     @Column(nullable = false)
     private LocalTime arrivalTime; // 도착 시간
 
-    public BusTimeToChilwonEntity(BusEntity bus, StopEntity stop, RouteChilwonEntity route, LocalTime arrivalTime) {
+    public BusTimeToMasanEntity(BusEntity bus, StopEntity stop, RouteMasanEntity route, LocalTime arrivalTime) {
         this.bus = bus;
         this.stop = stop;
         this.route = route;

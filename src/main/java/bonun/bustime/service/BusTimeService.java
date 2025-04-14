@@ -1,11 +1,11 @@
 package bonun.bustime.service;
 
 import bonun.bustime.dto.BusTimeDTO;
-import bonun.bustime.entity.ToChilwon.BusTimeToChilwonEntity;
-import bonun.bustime.entity.ToMasan.BusTimeToMasanEntity;
+import bonun.bustime.entity.tochilwon.BusTimeToChilwonEntity;
+import bonun.bustime.entity.tomasan.BusTimeToMasanEntity;
 import bonun.bustime.entity.StopEntity;
-import bonun.bustime.repository.ToChilwon.BusTimeToChilwonRepository;
-import bonun.bustime.repository.ToMasan.BusTimeToMasanRepository;
+import bonun.bustime.repository.tochilwon.BusTimeToChilwonRepository;
+import bonun.bustime.repository.tomasan.BusTimeToMasanRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,7 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -36,7 +35,7 @@ public class BusTimeService {
                         busTime.getRoute().getEndLocation().getStopName(),      // 노선 이름
                         busTime.getArrivalTime()           // 도착 시간
                 ))
-                .collect(Collectors.toList());
+                .toList();
     }
 
 
@@ -56,7 +55,7 @@ public class BusTimeService {
                         busTime.getRoute().getEndLocation().getStopName(),      // 노선 이름
                         busTime.getArrivalTime()           // 도착 시간
                 ))
-                .collect(Collectors.toList());
+                .toList();
     }
 
 
@@ -64,13 +63,11 @@ public class BusTimeService {
      * 저장된 모든 정류장(StopEntity)을 중복 없이 조회
      */
     public List<StopEntity> getAllChilwonStops() {
-        // BusTimeToChilwonRepository에 정의된 JPQL:
-        // SELECT DISTINCT s FROM BusTimeToChilwonEntity b JOIN b.stop s
+
         return busTimeToChilwonRepository.findAllStops();
     }
     public List<StopEntity> getAllMasanStops() {
-        // BusTimeToChilwonRepository에 정의된 JPQL:
-        // SELECT DISTINCT s FROM BusTimeToChilwonEntity b JOIN b.stop s
+
         return busTimeToMasanRepository.findAllStops();
     }
 
@@ -89,16 +86,14 @@ public class BusTimeService {
                 busTimeToChilwonRepository.findAllByBusNumber(busNumber,localTime);
 
         // 2) DTO 변환
-        List<BusTimeDTO> routeList = busTimes.stream()
+        return busTimes.stream()
                 .map(bte -> new BusTimeDTO(
                         bte.getBus().getBusNumber(),
                         bte.getStop().getStopName(),
                         bte.getRoute().getEndLocation().getStopName(),
                         bte.getArrivalTime()
                 ))
-                .collect(Collectors.toList());
-
-        return routeList;
+                .toList();
     }
 
 
@@ -110,7 +105,7 @@ public class BusTimeService {
         List<BusTimeToMasanEntity> busTimes =
                 busTimeToMasanRepository.findAllByBusNumber(busNumber,localTime);
 
-        List<BusTimeDTO> routeList = busTimes.stream()
+        return busTimes.stream()
                 .map(bte -> new BusTimeDTO(
                         bte.getBus().getBusNumber(),
                         bte.getStop().getStopName(),
@@ -118,9 +113,7 @@ public class BusTimeService {
                         bte.getRoute().getEndLocation().getStopName(),
                         bte.getArrivalTime()
                 ))
-                .collect(Collectors.toList());
-
-        return routeList;
+                .toList();
     }
 
 

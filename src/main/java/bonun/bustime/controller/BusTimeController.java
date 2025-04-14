@@ -71,7 +71,7 @@ public class BusTimeController {
             @RequestParam("busNumber") String busNumber,
             @RequestParam("arriveTime") String arriveTime
     ) {
-        System.out.println(arriveTime);
+
         return busTimeService.getBusMasanRouteTimes(busNumber,arriveTime);
     }
 

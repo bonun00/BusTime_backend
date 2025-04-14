@@ -2,12 +2,12 @@ package bonun.bustime.service;
 
 import bonun.bustime.entity.BusEntity;
 import bonun.bustime.entity.StopEntity;
-import bonun.bustime.entity.ToMasan.BusTimeToMasanEntity;
-import bonun.bustime.entity.ToMasan.RouteMasanEntity;
+import bonun.bustime.entity.tomasan.BusTimeToMasanEntity;
+import bonun.bustime.entity.tomasan.RouteMasanEntity;
 import bonun.bustime.repository.BusRepository;
 import bonun.bustime.repository.StopRepository;
-import bonun.bustime.repository.ToMasan.BusTimeToMasanRepository;
-import bonun.bustime.repository.ToMasan.RouteMasanRepository;
+import bonun.bustime.repository.tomasan.BusTimeToMasanRepository;
+import bonun.bustime.repository.tomasan.RouteMasanRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.*;
