@@ -22,7 +22,7 @@ jobs:
       run: ./gradlew build
 
     - name: ✅ SonarQube 분석
-      run: ./gradlew sonarqube \
-        -Dsonar.projectKey=HamanBus \
-        -Dsonar.host.url=http://localhost:9000 \
+      run: ./gradlew sonarqube
+        -Dsonar.projectKey=HamanBus
+        -Dsonar.host.url=http://localhost:9000
         -Dsonar.login=sqp_a721efb65f070bc7d72beffc33f3ab52243feadb
