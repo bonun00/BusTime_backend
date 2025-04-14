@@ -1,4 +1,4 @@
-name: Simple Build
+name: Simple Build with SonarQube
 
 on:
   push:
@@ -9,14 +9,20 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: 코드 체크아웃
+    - name: ✅ 코드 체크아웃
       uses: actions/checkout@v3
 
-    - name: JDK 설정
+    - name: ✅ JDK 설정
       uses: actions/setup-java@v3
       with:
         distribution: 'temurin'
         java-version: '17'
 
-    - name: Gradle 빌드
+    - name: ✅ Gradle 빌드
       run: ./gradlew build
+
+    - name: ✅ SonarQube 분석
+      run: ./gradlew sonarqube
+        -Dsonar.projectKey=HamanBus
+        -Dsonar.host.url=http://localhost:9000
+        -Dsonar.login=sqp_a721efb65f070bc7d72beffc33f3ab52243feadb
