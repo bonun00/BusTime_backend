@@ -25,4 +25,4 @@ jobs:
       run: ./gradlew sonarqube \
         -Dsonar.projectKey=HamanBus \
         -Dsonar.host.url=http://localhost:9000 \
-        -Dsonar.login=sqp_2c88589ee9bba1350409658020ef4ade43fc5ef1
+        -Dsonar.login=sqp_a721efb65f070bc7d72beffc33f3ab52243feadb
