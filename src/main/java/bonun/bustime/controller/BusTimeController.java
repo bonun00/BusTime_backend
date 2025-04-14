@@ -18,7 +18,7 @@ public class BusTimeController {
 
 
 
-    @GetMapping("/Masan-times")
+    @GetMapping("/masan-times")
     public ResponseEntity<List<BusTimeDTO>> getArrivalMasanTimes(
             @RequestParam("busNumber") String busNumber,
             @RequestParam("stopName") String stopName) {
@@ -60,16 +60,19 @@ public class BusTimeController {
 
     @GetMapping("/chilwon-route")
     public List<BusTimeDTO> getChilwonBusRoute(
-            @RequestParam("busNumber") String busNumber
+            @RequestParam("busNumber") String busNumber,
+            @RequestParam("arriveTime") String arriveTime
     ) {
-        return busTimeService.getBusChilwonRouteTimes(busNumber);
+        return busTimeService.getBusChilwonRouteTimes(busNumber, arriveTime);
     }
 
     @GetMapping("/masan-route")
     public List<BusTimeDTO> getMasanBusRoute(
-            @RequestParam("busNumber") String busNumber
+            @RequestParam("busNumber") String busNumber,
+            @RequestParam("arriveTime") String arriveTime
     ) {
-        return busTimeService.getBusMasanRouteTimes(busNumber);
+        System.out.println(arriveTime);
+        return busTimeService.getBusMasanRouteTimes(busNumber,arriveTime);
     }
 
 

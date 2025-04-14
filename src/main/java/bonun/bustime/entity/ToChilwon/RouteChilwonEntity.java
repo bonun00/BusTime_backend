@@ -1,6 +1,5 @@
 package bonun.bustime.entity.ToChilwon;
 
-import bonun.bustime.api.entity.RouteIdEntity;
 import bonun.bustime.entity.BusEntity;
 import bonun.bustime.entity.StopEntity;
 import jakarta.persistence.*;
@@ -23,8 +22,7 @@ public class RouteChilwonEntity {
     @ManyToOne
     @JoinColumn(name = "bus_id")
     private BusEntity bus;
-    // 🔴 여러 노선 -> 하나의 RouteIdEntity
-    //  (하나의 routeId / routeNo를 여러 행이 참조 가능)
+
 
     @ManyToOne
     @JoinColumn(name = "start_location_id", nullable = false)
