@@ -23,6 +23,6 @@ jobs:
 
     - name: ✅ SonarQube 분석
       run: ./gradlew sonarqube \
-        -Dsonar.projectKey=BusTime_backend \
+        -Dsonar.projectKey=HamanBus \
         -Dsonar.host.url=http://localhost:9000 \
-        -Dsonar.login=sqp_a6348713e03d23fb6e9dcfb78b02f6ac2227019b
+        -Dsonar.login=sqp_2c88589ee9bba1350409658020ef4ade43fc5ef1
