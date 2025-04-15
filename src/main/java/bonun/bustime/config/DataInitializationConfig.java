@@ -1,7 +1,7 @@
 package bonun.bustime.config;
 
-import bonun.bustime.external.bus.service.BusDataService;
-import bonun.bustime.external.bus.service.BusStopService;
+import bonun.bustime.service.BusDataService;
+import bonun.bustime.service.BusStopService;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

@@ -1,12 +1,11 @@
-package bonun.bustime.external.bus.service;
+package bonun.bustime.service;
 
-import bonun.bustime.external.bus.client.PublicBusApiClient;
-import bonun.bustime.external.bus.client.PublicBusApiClient.BusStopLocation;
-import bonun.bustime.external.bus.entity.BusStopEntity;
-import bonun.bustime.external.bus.entity.RouteIdEntity;
-
-import bonun.bustime.external.bus.repository.BusStopRepository;
-import bonun.bustime.external.bus.repository.RouteIdRepository;
+import bonun.bustime.dto.LocationByStopDTO;
+import bonun.bustime.external.PublicBusApiClient;
+import bonun.bustime.entity.BusStopEntity;
+import bonun.bustime.entity.RouteIdEntity;
+import bonun.bustime.repository.BusStopRepository;
+import bonun.bustime.repository.RouteIdRepository;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -37,25 +36,25 @@ public class BusStopService {
 
         for (RouteIdEntity route : routeList) {
             String routeId = route.getRouteId();
-            List<BusStopLocation> stops = publicBusApiClient.getStopsByRouteId(routeId);
+            List<LocationByStopDTO> stops = publicBusApiClient.getStopsByRouteId(routeId);
 
             if (stops.isEmpty()) {
                 log.warn("⚠️ 정류장이 없어서 생략: routeId={}", routeId);
                 continue;
             }
 
-            for (BusStopLocation stop : stops) {
-                if (busStopRepository.existsByNodeId(stop.getNodeId())) {
-                    log.debug("⏩ 이미 존재하는 정류장 생략: {}", stop.getNodeId());
+            for (LocationByStopDTO stop : stops) {
+                if (busStopRepository.existsByNodeId(stop.nodeId())) {
+                    log.debug("⏩ 이미 존재하는 정류장 생략: {}", stop.nodeId());
                     continue;
                 }
                 BusStopEntity entity = BusStopEntity.builder()
                         .routeId(routeId)
                         .direction(direction)
-                        .nodeId(stop.getNodeId())
-                        .nodeNm(stop.getNodeNm())
-                        .latitude(stop.getLat())
-                        .longitude(stop.getLng())
+                        .nodeId(stop.nodeId())
+                        .nodeNm(stop.nodeNm())
+                        .latitude(stop.lat())
+                        .longitude(stop.lng())
                         .build();
 
                 busStopRepository.save(entity);

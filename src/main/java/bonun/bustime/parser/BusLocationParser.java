@@ -1,6 +1,6 @@
-package bonun.bustime.external.bus.parser;
+package bonun.bustime.parser;
 
-import bonun.bustime.external.bus.dto.BusLocationDTO;
+import bonun.bustime.dto.BusLocationDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -137,32 +137,27 @@ public class BusLocationParser {
      */
     private BusLocationDTO parseBusLocation(JSONObject item) {
         try {
-            BusLocationDTO dto = new BusLocationDTO();
-
-            // vehicleId (문자열로 변환)
-            dto.setVehicleId(Optional.ofNullable(item.get("vehicleno"))
+            String vehicleId = Optional.ofNullable(item.get("vehicleno"))
                     .map(Object::toString)
-                    .orElse("UNKNOWN"));
+                    .orElse("UNKNOWN");
 
-            // gpslati (위도)
-            dto.setLatitude(parseDouble(item.get("gpslati")));
+            double latitude = parseDouble(item.get("gpslati"));
+            double longitude = parseDouble(item.get("gpslong"));
 
-            // gpslong (경도)
-            dto.setLongitude(parseDouble(item.get("gpslong")));
-
-            // 추가 필드 설정
-            dto.setRoutenm(Optional.ofNullable(item.get("routenm"))
+            String routenm = Optional.ofNullable(item.get("routenm"))
                     .map(Object::toString)
-                    .orElse(""));
+                    .orElse("");
 
-            dto.setNodenm(Optional.ofNullable(item.get("nodenm"))
+            String nodenm = Optional.ofNullable(item.get("nodenm"))
                     .map(Object::toString)
-                    .orElse(""));
-            dto.setRouteId(Optional.ofNullable(item.get("nodeid"))
-                    .map(Object::toString)
-                    .orElse(""));
+                    .orElse("");
 
-            return dto;
+            String routeId = Optional.ofNullable(item.get("nodeid"))
+                    .map(Object::toString)
+                    .orElse("");
+
+            return new BusLocationDTO(vehicleId, latitude, longitude, routenm, nodenm, routeId);
+
         } catch (Exception e) {
             log.error("🚨 버스 위치 파싱 오류: {}", item, e);
             return null;

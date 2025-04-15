@@ -1,8 +1,8 @@
-package bonun.bustime.external.bus.service;
+package bonun.bustime.service;
 
-import bonun.bustime.external.bus.dto.BusLocationDTO;
-import bonun.bustime.external.bus.client.BusLocationClient;
-import bonun.bustime.external.bus.parser.BusLocationParser;
+import bonun.bustime.dto.BusLocationDTO;
+import bonun.bustime.external.BusLocationClient;
+import bonun.bustime.parser.BusLocationParser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
@@ -36,7 +36,7 @@ public class BusLocationService {
 
             for (BusLocationDTO dto : locations) {
                 log.info("🚌 vehicleId={} 노선명={} 노선 Id={}",
-                        dto.getVehicleId(), dto.getRoutenm(),routeId);
+                        dto.vehicleId(), dto.routenm(),routeId);
             }
 
             return locations;

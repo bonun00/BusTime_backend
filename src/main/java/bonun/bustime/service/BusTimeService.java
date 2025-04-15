@@ -99,7 +99,6 @@ public class BusTimeService {
 
     public List<BusTimeDTO> getBusMasanRouteTimes(String busNumber, String time) {
 
-
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
         LocalTime localTime = LocalTime.parse(time, formatter);
         List<BusTimeToMasanEntity> busTimes =
@@ -109,7 +108,6 @@ public class BusTimeService {
                 .map(bte -> new BusTimeDTO(
                         bte.getBus().getBusNumber(),
                         bte.getStop().getStopName(),
-                        // 예: 종점 이름을 routeName으로 삼는다거나, 필요에 따라
                         bte.getRoute().getEndLocation().getStopName(),
                         bte.getArrivalTime()
                 ))

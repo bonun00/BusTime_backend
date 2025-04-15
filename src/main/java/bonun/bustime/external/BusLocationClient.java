@@ -1,5 +1,6 @@
-package bonun.bustime.external.bus.client;
+package bonun.bustime.external;
 
+import bonun.bustime.config.BusApiProperties;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,15 +20,8 @@ import java.net.URI;
 public class BusLocationClient {
 
     private final RestTemplate restTemplate;
+    private final BusApiProperties properties;
 
-    @Value("${bus.api.location.service-key}")
-    private String serviceKey;
-
-    @Value("${bus.api.location.base-url}")
-    private String baseUrl;
-
-    @Value("${bus.api.location.city-code}")
-    private Integer cityCode;
 
     /**
      * routeId를 이용하여 버스 위치 정보를 조회하는 API 호출
@@ -45,13 +39,14 @@ public class BusLocationClient {
         return response;
     }
 
+
     private URI buildLocationApiUri(String routeId) {
-        return UriComponentsBuilder.fromHttpUrl(baseUrl)
-                .queryParam("serviceKey", serviceKey)
-                .queryParam("pageNo", 1)
-                .queryParam("numOfRows", 10)
-                .queryParam("_type", "json")
-                .queryParam("cityCode", cityCode)
+        return UriComponentsBuilder.fromHttpUrl(properties.getBusLocationUrl())
+                .queryParam("serviceKey", properties.getServiceKey())
+                .queryParam("pageNo", properties.getPageNo())
+                .queryParam("numOfRows", properties.getNumOfRows())
+                .queryParam("_type", properties.getType())
+                .queryParam("cityCode", properties.getCityCode())
                 .queryParam("routeId", routeId)
                 .build(true)
                 .toUri();

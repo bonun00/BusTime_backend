@@ -1,4 +1,4 @@
-package bonun.bustime.external.bus.client;
+package bonun.bustime.external;
 
 import bonun.bustime.config.BusApiProperties;
 import lombok.RequiredArgsConstructor;
@@ -40,11 +40,11 @@ public class BusApiClient {
     }
 
     private URI buildApiUrl(String busNumber) {
-        return UriComponentsBuilder.fromHttpUrl(properties.getApiUrl())
+        return UriComponentsBuilder.fromHttpUrl(properties.getBusInfoUrl())
                 .queryParam("serviceKey", properties.getServiceKey())
                 .queryParam("pageNo", properties.getPageNo())
                 .queryParam("numOfRows", properties.getNumOfRows())
-                .queryParam("_type", "json")
+                .queryParam("_type", properties.getType())
                 .queryParam("cityCode", properties.getCityCode())
                 .queryParam("routeNo", busNumber)
                 .build(true)

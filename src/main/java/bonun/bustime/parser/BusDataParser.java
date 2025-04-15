@@ -1,6 +1,7 @@
-package bonun.bustime.external.bus.parser;
+package bonun.bustime.parser;
 
-import bonun.bustime.external.bus.dto.response.BusRouteResponse;
+import bonun.bustime.dto.BusRouteDTO;
+
 import lombok.extern.slf4j.Slf4j;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -18,8 +19,8 @@ public class BusDataParser {
     /**
      * API 응답에서 버스 노선 정보 추출
      */
-    public List<BusRouteResponse> parseRouteInfo(ResponseEntity<String> response) {
-        List<BusRouteResponse> result = new ArrayList<>();
+    public List<BusRouteDTO> parseRouteInfo(ResponseEntity<String> response) {
+        List<BusRouteDTO> result = new ArrayList<>();
         try {
             Object itemObject = getItemObject(response);
             if (itemObject == null) return result;
@@ -28,12 +29,12 @@ public class BusDataParser {
                 JSONArray itemArray = (JSONArray) itemObject;
                 for (Object obj : itemArray) {
                     JSONObject item = (JSONObject) obj;
-                    BusRouteResponse route = parseRouteItem(item);
+                    BusRouteDTO route = parseRouteItem(item);
                     if (route != null) result.add(route);
                 }
             } else if (itemObject instanceof JSONObject) {
                 JSONObject item = (JSONObject) itemObject;
-                BusRouteResponse route = parseRouteItem(item);
+                BusRouteDTO route = parseRouteItem(item);
                 if (route != null) result.add(route);
             }
         } catch (Exception e) {
@@ -45,7 +46,7 @@ public class BusDataParser {
     /**
      * 단일 항목 파싱
      */
-    private BusRouteResponse parseRouteItem(JSONObject item) {
+    private BusRouteDTO parseRouteItem(JSONObject item) {
         try {
             String routeId = (String) item.get("routeid");
             String routeNo = (String) item.get("routeno");
@@ -58,19 +59,17 @@ public class BusDataParser {
                 return null;
             }
 
-            BusRouteResponse response = new BusRouteResponse();
-            response.setRouteId(routeId);
-            response.setRouteNo(routeNo);
-            response.setStartNodeName(startNodeName != null ? startNodeName : "");
-            response.setEndNodeName(endNodeName != null ? endNodeName : "");
-            response.setStartVehicleTime(startVehicleTime);
-            response.setEndVehicleTime(endVehicleTime);
+            String direction = determineDirection(startNodeName, endNodeName);
 
-            // direction 결정
-            String direction = determineDirection(response.getStartNodeName(), response.getEndNodeName());
-            response.setDirection(direction);
-
-            return response;
+            return new BusRouteDTO(
+                    routeId,
+                    routeNo,
+                    startNodeName != null ? startNodeName : "",
+                    endNodeName != null ? endNodeName : "",
+                    startVehicleTime,
+                    endVehicleTime,
+                    direction
+            );
         } catch (Exception e) {
             log.error("🚨 route item 파싱 오류", e);
             return null;

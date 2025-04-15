@@ -1,9 +1,9 @@
 package bonun.bustime.service;
 
-import bonun.bustime.external.bus.entity.RouteIdEntity;
+import bonun.bustime.entity.RouteIdEntity;
 import bonun.bustime.entity.tochilwon.RouteChilwonEntity;
 import bonun.bustime.entity.tomasan.RouteMasanEntity;
-import bonun.bustime.external.bus.repository.RouteIdRepository;
+import bonun.bustime.repository.RouteIdRepository;
 import bonun.bustime.repository.tochilwon.RouteChilwonRepository;
 import bonun.bustime.repository.tomasan.RouteMasanRepository;
 import lombok.RequiredArgsConstructor;

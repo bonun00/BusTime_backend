@@ -1,7 +1,7 @@
 package bonun.bustime.controller;
 
-import bonun.bustime.external.bus.entity.BusStopEntity;
-import bonun.bustime.external.bus.repository.BusStopRepository;
+import bonun.bustime.entity.BusStopEntity;
+import bonun.bustime.repository.BusStopRepository;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

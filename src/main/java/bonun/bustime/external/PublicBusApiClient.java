@@ -1,5 +1,7 @@
-package bonun.bustime.external.bus.client;
+package bonun.bustime.external;
 
+import bonun.bustime.config.BusApiProperties;
+import bonun.bustime.dto.LocationByStopDTO;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
@@ -20,23 +22,13 @@ import java.util.*;
 @RequiredArgsConstructor
 public class PublicBusApiClient {
 
-    private final RestTemplate restTemplate = new RestTemplate();
+    private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
+    private final BusApiProperties properties;
 
-    @Value("${public-api.service-key}")
-    private String serviceKey;
-
-    public List<BusStopLocation> getStopsByRouteId(String routeId) {
+    public List<LocationByStopDTO> getStopsByRouteId(String routeId) {
         try {
-            URI uri = UriComponentsBuilder.fromHttpUrl("https://apis.data.go.kr/1613000/BusRouteInfoInqireService/getRouteAcctoThrghSttnList")
-                    .queryParam("serviceKey", serviceKey)
-                    .queryParam("pageNo", 1)
-                    .queryParam("numOfRows", 100)
-                    .queryParam("_type", "json")
-                    .queryParam("cityCode", 38320)
-                    .queryParam("routeId", routeId)
-                    .build(true)
-                    .toUri();
+            URI uri = buildApiUrl(routeId);
 
             log.info("📡 공공 API 요청 URI: {}", uri);
             ResponseEntity<String> response = restTemplate.getForEntity(uri, String.class);
@@ -48,13 +40,13 @@ public class PublicBusApiClient {
             items.forEach(sortedItems::add);
             sortedItems.sort(Comparator.comparingInt(n -> n.path("nodeord").asInt()));
 
-            List<BusStopLocation> stops = new ArrayList<>();
+            List<LocationByStopDTO> stops = new ArrayList<>();
             for (JsonNode item : sortedItems) {
                 double lat = item.path("gpslati").asDouble();
                 double lng = item.path("gpslong").asDouble();
                 String nodeNm = item.path("nodenm").asText();
                 String nodeId = item.path("nodeid").asText();
-                stops.add(new BusStopLocation(nodeNm,nodeId,lat,lng));
+                stops.add(new LocationByStopDTO(nodeNm,nodeId,lat,lng));
             }
 
             log.info("📍 정류장 {}개 조회 완료: routeId={}", stops.size(), routeId);
@@ -66,16 +58,17 @@ public class PublicBusApiClient {
         }
     }
 
-    @Getter
-    @Setter
-    @RequiredArgsConstructor
-    public static class BusStopLocation {
-        private final String nodeNm;
-        private final String nodeId;
-        private final double lat;
-        private final double lng;
-
-
-
+    private URI buildApiUrl(String routeId) {
+        return UriComponentsBuilder.fromHttpUrl(properties.getStopLocationUrl())
+                .queryParam("serviceKey", properties.getServiceKey())
+                .queryParam("pageNo", properties.getPageNo())
+                .queryParam("numOfRows", properties.getNumOfRows())
+                .queryParam("_type", properties.getType())
+                .queryParam("cityCode", properties.getCityCode())
+                .queryParam("routeId", routeId)
+                .build(true)
+                .toUri();
     }
+
+
 }

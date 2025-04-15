@@ -1,4 +1,4 @@
-package bonun.bustime.external.bus.entity;
+package bonun.bustime.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;

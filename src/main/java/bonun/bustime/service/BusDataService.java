@@ -1,11 +1,11 @@
-package bonun.bustime.external.bus.service;
+package bonun.bustime.service;
 
-import bonun.bustime.external.bus.entity.RouteIdEntity;
-import bonun.bustime.external.bus.repository.RouteIdRepository;
-import bonun.bustime.external.bus.client.BusApiClient;
-import bonun.bustime.external.bus.dto.response.BusRouteResponse;
-import bonun.bustime.external.bus.mapper.RouteMapper;
-import bonun.bustime.external.bus.parser.BusDataParser;
+import bonun.bustime.entity.RouteIdEntity;
+import bonun.bustime.repository.RouteIdRepository;
+import bonun.bustime.external.BusApiClient;
+import bonun.bustime.dto.BusRouteDTO;
+import bonun.bustime.mapper.RouteMapper;
+import bonun.bustime.parser.BusDataParser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -43,13 +43,13 @@ public class BusDataService {
             }
 
             // 3. 노선 정보 파싱
-            List<BusRouteResponse> routeInfoList = dataParser.parseRouteInfo(response);
+            List<BusRouteDTO> routeInfoList = dataParser.parseRouteInfo(response);
             if (routeInfoList.isEmpty()) {
                 return "해당 버스 번호에 대한 routeId를 찾을 수 없습니다.";
             }
 
             // 4. DB에 저장
-            int saveCount = saveRouteEntities(routeInfoList, busNumber);
+            int saveCount = saveRouteEntities(routeInfoList);
 
             return "routeId 저장 완료 (총 " + saveCount + "개)";
         } catch (Exception e) {
@@ -61,11 +61,11 @@ public class BusDataService {
     /**
      * 노선 정보 저장 처리
      */
-    private int saveRouteEntities(List<BusRouteResponse> routeInfoList, String busNumber) {
+    private int saveRouteEntities(List<BusRouteDTO> routeInfoList) {
         int saveCount = 0;
 
-        for (BusRouteResponse routeInfo : routeInfoList) {
-            String routeNo = routeInfo.getRouteNo();
+        for (BusRouteDTO routeInfo : routeInfoList) {
+            String routeNo = routeInfo.routeNo();
             if (routeNo == null) continue;
 
             // "113-", "250-" 로 시작하는지만 체크
@@ -74,9 +74,8 @@ public class BusDataService {
             }
 
             // 이미 존재하는지 확인
-            Optional<RouteIdEntity> existing = routeIdRepository.findByRouteId(routeInfo.getRouteId());
+            Optional<RouteIdEntity> existing = routeIdRepository.findByRouteId(routeInfo.routeId());
             if (existing.isPresent()) {
-//                log.info("이미 저장된 routeId={}", routeInfo.getRouteId());
             } else {
                 // DTO -> Entity 변환 및 저장
                 RouteIdEntity entity = routeMapper.toEntity(routeInfo);

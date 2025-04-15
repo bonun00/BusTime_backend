@@ -1,11 +1,11 @@
-package bonun.bustime.external.bus.client;
+package bonun.bustime.external;
 
-import bonun.bustime.external.bus.dto.ArrivalInfo;
+import bonun.bustime.config.BusApiProperties;
+import bonun.bustime.dto.ArrivalInfo;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -21,29 +21,15 @@ import java.util.List;
 @RequiredArgsConstructor
 public class StopTimeClient {
 
-    @Value("${public-api.service-key}")
-    private String serviceKey;
-
-    private final RestTemplate restTemplate = new RestTemplate();
+    private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
+    private final BusApiProperties properties;
 
     public List<ArrivalInfo> getArrivalInfoByNodeId(String nodeId) {
         try {
-            URI uri = UriComponentsBuilder
-                    .fromHttpUrl("https://apis.data.go.kr/1613000/ArvlInfoInqireService/getSttnAcctoArvlPrearngeInfoList")
-                    .queryParam("serviceKey", serviceKey)
-                    .queryParam("pageNo", 1)
-                    .queryParam("numOfRows", 100)
-                    .queryParam("_type", "json")
-                    .queryParam("cityCode", 38320)
-                    .queryParam("nodeId", nodeId)
-                    .build(true)
-                    .toUri();
-
+            URI uri = buildApiUrl(nodeId);
             log.info("📡 도착정보 API 요청: {}", uri);
-
             ResponseEntity<String> response = restTemplate.getForEntity(uri, String.class);
-
 
             JsonNode itemsNode = objectMapper.readTree(response.getBody())
                     .path("response").path("body").path("items").path("item");
@@ -71,6 +57,23 @@ public class StopTimeClient {
             return Collections.emptyList();
         }
     }
+
+
+    private URI buildApiUrl(String nodeId) {
+        return UriComponentsBuilder
+                .fromHttpUrl(properties.getStopTimeApiUri())
+                .queryParam("serviceKey", properties.getServiceKey())
+                .queryParam("pageNo", properties.getPageNo())
+                .queryParam("numOfRows", properties.getNumOfRows())
+                .queryParam("_type", properties.getType())
+                .queryParam("cityCode", properties.getCityCode())
+                .queryParam("nodeId", nodeId)
+                .build(true)
+                .toUri();
+    }
+
+
+
     private ArrivalInfo parseArrivalInfo(JsonNode item) {
         return new ArrivalInfo(
                 item.path("nodeid").asText(),

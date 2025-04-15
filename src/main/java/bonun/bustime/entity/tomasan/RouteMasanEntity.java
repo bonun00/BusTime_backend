@@ -33,10 +33,10 @@ public class RouteMasanEntity {
     @JoinColumn(name = "end_location_id", nullable = false)
     private StopEntity endLocation;
 
-    // ✅ 추가: 출발 시각(가장 이른 시간)
+    //  추가: 출발 시각(가장 이른 시간)
     private LocalTime startLocationTime;
 
-    // ✅ 추가: 종점 시각(가장 늦은 시간)
+    //  추가: 종점 시각(가장 늦은 시간)
     private LocalTime endLocationTime;
 
     public RouteMasanEntity(BusEntity bus, StopEntity startLocation, StopEntity endLocation) {

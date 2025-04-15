@@ -33,23 +33,23 @@ management:
     scheduling:
       enabled: true
 
-naver:
-  api:
-    client-id: 2klgdl5i6l
-    client-secret: Kta9HdjiBmVF0XZs1dETRbdXcU77v0Me0UsKIaJ7
 public-api:
   service-key: tNbsVnMlaZ7jFtVUDgBJTlDNg%2FVFa7R7XUYyegbItZY61%2FL%2FSgsl%2BFUP39TKdewZ5gwiPvYv3oaL6Zx8fv5iBg%3D%3D
 
 bus:
   api:
-    location:
-      service-key: tNbsVnMlaZ7jFtVUDgBJTlDNg%2FVFa7R7XUYyegbItZY61%2FL%2FSgsl%2BFUP39TKdewZ5gwiPvYv3oaL6Zx8fv5iBg%3D%3D
-      base-url: https://apis.data.go.kr/1613000/BusLcInfoInqireService/getRouteAcctoBusLcList
-      city-code: 38320
-    service-key: tNbsVnMlaZ7jFtVUDgBJTlDNg%2FVFa7R7XUYyegbItZY61%2FL%2FSgsl%2BFUP39TKdewZ5gwiPvYv3oaL6Zx8fv5iBg%3D%3D
-    api-url: https://apis.data.go.kr/1613000/BusRouteInfoInqireService/getRouteNoList
+    bus-location:
+      api-url: https://apis.data.go.kr/1613000/BusLcInfoInqireService/getRouteAcctoBusLcList
+    info:
+      api-url: https://apis.data.go.kr/1613000/BusRouteInfoInqireService/getRouteNoList
+    stop-location:
+      api-url: https://apis.data.go.kr/1613000/ArvlInfoInqireService/getSttnAcctoArvlPrearngeInfoList
+    stop-time:
+      api-uri: https://apis.data.go.kr/1613000/ArvlInfoInqireService/getSttnAcctoArvlPrearngeInfoList
+
     city-code: 38320
     page-no: 1
     num-of-rows: 200
+    type: json
   routes:
     to-fetch: 113,250

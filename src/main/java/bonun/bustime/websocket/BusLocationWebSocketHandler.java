@@ -1,8 +1,8 @@
 package bonun.bustime.websocket;
 
-import bonun.bustime.external.bus.service.BusLocationService;
 import bonun.bustime.service.ActiveRouteService;
-import bonun.bustime.external.bus.dto.BusLocationDTO;
+import bonun.bustime.dto.BusLocationDTO;
+import bonun.bustime.service.BusLocationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.MessageMapping;

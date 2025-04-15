@@ -1,7 +1,7 @@
-package bonun.bustime.external.bus.repository;
+package bonun.bustime.repository;
 
 
-import bonun.bustime.external.bus.entity.BusStopEntity;
+import bonun.bustime.entity.BusStopEntity;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

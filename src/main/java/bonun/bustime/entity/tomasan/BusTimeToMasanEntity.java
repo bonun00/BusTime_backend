@@ -11,7 +11,7 @@ import java.time.LocalTime;
 @Getter
 @Setter
 @ToString(exclude = {"bus", "stop", "route"})
-@NoArgsConstructor // JPA 기본 생성자
+@NoArgsConstructor
 @AllArgsConstructor
 public class BusTimeToMasanEntity {
 
