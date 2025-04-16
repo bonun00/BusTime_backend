@@ -1,6 +1,6 @@
 package bonun.bustime.controller;
 
-import bonun.bustime.dto.TimePairDTO;
+import bonun.bustime.dto.BusSearchDTO;
 import bonun.bustime.service.BusSearchService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +19,7 @@ public class BusSearchController {
      * GET /bus/route-chilwon-schedules?departureStop=...&arrivalStop=...
      */
     @GetMapping("/route-chilwon-schedules")
-    public List<TimePairDTO> getChilwonSchedules(
+    public List<BusSearchDTO> getChilwonSchedules(
             @RequestParam("departureStop") String departureStop,
             @RequestParam("arrivalStop") String arrivalStop
     ) {
@@ -31,7 +31,7 @@ public class BusSearchController {
      * GET /bus/route-masan-schedules?departureStop=...&arrivalStop=...
      */
     @GetMapping("/route-masan-schedules")
-    public List<TimePairDTO> getMasanSchedules(
+    public List<BusSearchDTO> getMasanSchedules(
             @RequestParam("departureStop") String departureStop,
             @RequestParam("arrivalStop") String arrivalStop
     ) {

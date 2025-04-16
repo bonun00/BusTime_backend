@@ -43,7 +43,7 @@ bus:
     info:
       api-url: https://apis.data.go.kr/1613000/BusRouteInfoInqireService/getRouteNoList
     stop-location:
-      api-url: https://apis.data.go.kr/1613000/ArvlInfoInqireService/getSttnAcctoArvlPrearngeInfoList
+      api-url: https://apis.data.go.kr/1613000/BusRouteInfoInqireService/getRouteAcctoThrghSttnList
     stop-time:
       api-uri: https://apis.data.go.kr/1613000/ArvlInfoInqireService/getSttnAcctoArvlPrearngeInfoList
 

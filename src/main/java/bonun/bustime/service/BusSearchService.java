@@ -1,6 +1,6 @@
 package bonun.bustime.service;
 
-import bonun.bustime.dto.TimePairDTO;
+import bonun.bustime.dto.BusSearchDTO;
 import bonun.bustime.repository.tochilwon.BusTimeToChilwonRepository;
 import bonun.bustime.repository.tomasan.BusTimeToMasanRepository;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +23,7 @@ public class BusSearchService {
      * 칠원 노선 버스 시간표 조회
      */
 
-    public List<TimePairDTO> getChilwonSchedules(String departureStop, String arrivalStop) {
+    public List<BusSearchDTO> getChilwonSchedules(String departureStop, String arrivalStop) {
         return busTimeToChilwonRepository.findChilwonSchedules(departureStop, arrivalStop);
     }
 
@@ -31,7 +31,7 @@ public class BusSearchService {
      * 출발 정류장(departureStop)과 도착 정류장(arrivalStop)을 기준으로
      * 마산 노선 버스 시간표 조회
      */
-    public List<TimePairDTO> getMasanSchedules(String departureStop, String arrivalStop) {
+    public List<BusSearchDTO> getMasanSchedules(String departureStop, String arrivalStop) {
         return busTimeToMasanRepository.findMasanSchedules(departureStop, arrivalStop);
     }
 

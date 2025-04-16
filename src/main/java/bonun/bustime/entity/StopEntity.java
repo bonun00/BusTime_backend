@@ -19,8 +19,4 @@ public class StopEntity {
 
     private String stopName;
 
-    private Double latitude;
-
-    private Double longitude;
-
 }

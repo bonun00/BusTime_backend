@@ -1,7 +1,7 @@
 package bonun.bustime.controller;
 
-import bonun.bustime.entity.BusStopEntity;
-import bonun.bustime.repository.BusStopRepository;
+import bonun.bustime.entity.NodeIdEntity;
+import bonun.bustime.repository.StopListByRouteIdRepository;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -15,16 +15,16 @@ import java.util.List;
 @RestController
 @RequestMapping("/bus")
 @RequiredArgsConstructor
-public class BusRouteController {
+public class StopListController {
 
 
-    private final BusStopRepository routePathRepository;
+    private final StopListByRouteIdRepository stopListByRouteIdRepository;
 
     @GetMapping("/path")
-    public ResponseEntity<List<BusStopEntity>> findRoutePathByRouteId(@RequestParam("direction") String direction) {
+    public ResponseEntity<List<NodeIdEntity>> findRoutePathByRouteId() {
 
 
-        List<BusStopEntity>result = routePathRepository.findByDirection(direction);
+        List<NodeIdEntity>result = stopListByRouteIdRepository.findAll();
 
         if (result.isEmpty()) {
             return ResponseEntity.notFound().build();

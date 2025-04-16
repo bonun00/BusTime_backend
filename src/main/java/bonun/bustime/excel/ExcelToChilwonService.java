@@ -1,4 +1,4 @@
-package bonun.bustime.service;
+package bonun.bustime.excel;
 
 import bonun.bustime.entity.BusEntity;
 import bonun.bustime.entity.StopEntity;

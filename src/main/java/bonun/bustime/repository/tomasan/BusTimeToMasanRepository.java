@@ -1,6 +1,6 @@
 package bonun.bustime.repository.tomasan;
 
-import bonun.bustime.dto.TimePairDTO;
+import bonun.bustime.dto.BusSearchDTO;
 import bonun.bustime.entity.tomasan.BusTimeToMasanEntity;
 import bonun.bustime.entity.StopEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -79,7 +79,7 @@ public interface BusTimeToMasanRepository extends JpaRepository<BusTimeToMasanEn
      *  어떻게 구성할지에 따라 달라질 수 있습니다.
      */
     @Query("""
-SELECT new bonun.bustime.dto.TimePairDTO(
+SELECT new bonun.bustime.dto.BusSearchDTO(
   b1.arrivalTime,
   b2.arrivalTime,
   bus.busNumber
@@ -96,7 +96,7 @@ WHERE s1.stopName = :departureStop
   AND b1.arrivalTime < b2.arrivalTime
 ORDER BY b1.arrivalTime
 """)
-    List<TimePairDTO> findMasanSchedules(
+    List<BusSearchDTO> findMasanSchedules(
             @Param("departureStop") String departureStop,
             @Param("arrivalStop") String arrivalStop
     );

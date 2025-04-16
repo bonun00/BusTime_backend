@@ -9,8 +9,7 @@ import lombok.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
-@Table(name = "bus_stops")
-public class BusStopEntity {
+public class NodeIdEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

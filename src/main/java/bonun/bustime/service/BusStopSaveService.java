@@ -1,14 +1,16 @@
 package bonun.bustime.service;
 
 import bonun.bustime.dto.LocationByStopDTO;
-import bonun.bustime.external.PublicBusApiClient;
-import bonun.bustime.entity.BusStopEntity;
+import bonun.bustime.external.StopListByRouteIdClient;
+import bonun.bustime.entity.NodeIdEntity;
 import bonun.bustime.entity.RouteIdEntity;
-import bonun.bustime.repository.BusStopRepository;
+import bonun.bustime.parser.StopListByRouteIdParser;
+import bonun.bustime.repository.StopListByRouteIdRepository;
 import bonun.bustime.repository.RouteIdRepository;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -16,12 +18,12 @@ import java.util.*;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class BusStopService {
+public class BusStopSaveService {
 
     private final RouteIdRepository routeIdRepository;
-    private final PublicBusApiClient publicBusApiClient;
-    private final BusStopRepository busStopRepository;
-
+    private final StopListByRouteIdClient stopListByRouteIdClient;
+    private final StopListByRouteIdParser stopListByRouteIdParser;
+    private final StopListByRouteIdRepository stopListByRouteIdRepository;
 
     public void saveAllRoutePaths() {
         saveByDirection("마산");
@@ -36,7 +38,9 @@ public class BusStopService {
 
         for (RouteIdEntity route : routeList) {
             String routeId = route.getRouteId();
-            List<LocationByStopDTO> stops = publicBusApiClient.getStopsByRouteId(routeId);
+            ResponseEntity<String> response = stopListByRouteIdClient.fetchStopLocations(routeId);
+
+            List<LocationByStopDTO> stops = stopListByRouteIdParser.parseStopLocations(response, routeId);
 
             if (stops.isEmpty()) {
                 log.warn("⚠️ 정류장이 없어서 생략: routeId={}", routeId);
@@ -44,11 +48,11 @@ public class BusStopService {
             }
 
             for (LocationByStopDTO stop : stops) {
-                if (busStopRepository.existsByNodeId(stop.nodeId())) {
+                if (stopListByRouteIdRepository.existsByNodeId(stop.nodeId())) {
                     log.debug("⏩ 이미 존재하는 정류장 생략: {}", stop.nodeId());
                     continue;
                 }
-                BusStopEntity entity = BusStopEntity.builder()
+                NodeIdEntity entity = NodeIdEntity.builder()
                         .routeId(routeId)
                         .direction(direction)
                         .nodeId(stop.nodeId())
@@ -57,7 +61,7 @@ public class BusStopService {
                         .longitude(stop.lng())
                         .build();
 
-                busStopRepository.save(entity);
+                stopListByRouteIdRepository.save(entity);
             }
 
             log.info("✅ {} 방향 {} 노선의 정류장 {}개 저장 완료", direction, routeId, stops.size());

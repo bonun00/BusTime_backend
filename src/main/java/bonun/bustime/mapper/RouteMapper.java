@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 public class RouteMapper {
 
     /**
-     * BusRouteResponse를 RouteIdEntity로 변환
+     * BusRouteDTO를 RouteIdEntity로 변환
      */
 
     public RouteIdEntity toEntity(BusRouteDTO response) {

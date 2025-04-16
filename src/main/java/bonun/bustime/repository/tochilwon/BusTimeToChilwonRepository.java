@@ -1,6 +1,6 @@
 package bonun.bustime.repository.tochilwon;
 
-import bonun.bustime.dto.TimePairDTO;
+import bonun.bustime.dto.BusSearchDTO;
 import bonun.bustime.entity.BusEntity;
 import bonun.bustime.entity.tochilwon.BusTimeToChilwonEntity;
 import bonun.bustime.entity.tochilwon.RouteChilwonEntity;
@@ -91,7 +91,7 @@ public interface BusTimeToChilwonRepository extends JpaRepository<BusTimeToChilw
      *  어떻게 구성할지에 따라 달라질 수 있습니다.
      */
     @Query("""
-SELECT new bonun.bustime.dto.TimePairDTO(
+SELECT new bonun.bustime.dto.BusSearchDTO(
   b1.arrivalTime,
   b2.arrivalTime,
    bus.busNumber
@@ -108,7 +108,7 @@ WHERE s1.stopName = :departureStop
   AND b1.arrivalTime < b2.arrivalTime
 ORDER BY b1.arrivalTime
 """)
-    List<TimePairDTO> findChilwonSchedules(
+    List<BusSearchDTO> findChilwonSchedules(
             @Param("departureStop") String departureStop,
             @Param("arrivalStop") String arrivalStop
     );

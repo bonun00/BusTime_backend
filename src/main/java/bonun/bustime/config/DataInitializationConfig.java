@@ -1,7 +1,7 @@
 package bonun.bustime.config;
 
 import bonun.bustime.service.BusDataService;
-import bonun.bustime.service.BusStopService;
+import bonun.bustime.service.BusStopSaveService;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,7 +16,7 @@ import java.util.List;
 public class DataInitializationConfig {
 
     private final BusDataService busDataService;
-    private final BusStopService routePathSaveService;
+    private final BusStopSaveService busStopSaveService;
 
     @Value("#{'${bus.routes.to-fetch}'.split(',')}")
     private List<String> routesToFetch;
@@ -31,7 +31,7 @@ public class DataInitializationConfig {
         }
         log.info("📝 버스 노선 데이터 초기화 완료");
         log.info("Initializing data");
-        routePathSaveService.saveAllRoutePaths();
+        busStopSaveService.saveAllRoutePaths();
         log.info("Data loaded");
     }
 }

@@ -34,8 +34,7 @@ public class BusTimeService {
                         busTime.getStop().getStopName(),   // 정류장 이름
                         busTime.getRoute().getEndLocation().getStopName(),      // 노선 이름
                         busTime.getArrivalTime()           // 도착 시간
-                ))
-                .toList();
+                )).toList();
     }
 
 
@@ -54,8 +53,7 @@ public class BusTimeService {
                         busTime.getStop().getStopName(),   // 정류장 이름
                         busTime.getRoute().getEndLocation().getStopName(),      // 노선 이름
                         busTime.getArrivalTime()           // 도착 시간
-                ))
-                .toList();
+                )).toList();
     }
 
 

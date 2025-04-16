@@ -16,7 +16,7 @@ import java.net.URI;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class BusApiClient {
+public class BusInfoClient {
 
     private final RestTemplate restTemplate;
     private final BusApiProperties properties;

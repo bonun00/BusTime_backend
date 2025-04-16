@@ -1,7 +1,7 @@
 package bonun.bustime.dto;
 
 
-public record ArrivalInfo(
+public record LiveStopTimeDTO(
 
         String nodeId,
         String nodNm,

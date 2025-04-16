@@ -2,7 +2,7 @@ package bonun.bustime.service;
 
 import bonun.bustime.entity.RouteIdEntity;
 import bonun.bustime.repository.RouteIdRepository;
-import bonun.bustime.external.BusApiClient;
+import bonun.bustime.external.BusInfoClient;
 import bonun.bustime.dto.BusRouteDTO;
 import bonun.bustime.mapper.RouteMapper;
 import bonun.bustime.parser.BusDataParser;
@@ -19,7 +19,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class BusDataService {
 
-    private final BusApiClient busApiClient;
+    private final BusInfoClient busInfoClient;
     private final BusDataParser dataParser;
     private final RouteMapper routeMapper;
     private final RouteIdRepository routeIdRepository;
@@ -30,7 +30,7 @@ public class BusDataService {
     public String fetchAndSaveRouteId(String busNumber) {
         try {
             // 1. API 호출
-            ResponseEntity<String> response = busApiClient.fetchBusRouteInfo(busNumber);
+            ResponseEntity<String> response = busInfoClient.fetchBusRouteInfo(busNumber);
 
             // 2. routeNo 일치 여부 확인
             String routeNo = dataParser.extractRouteNo(response);
@@ -75,12 +75,9 @@ public class BusDataService {
 
             // 이미 존재하는지 확인
             Optional<RouteIdEntity> existing = routeIdRepository.findByRouteId(routeInfo.routeId());
-            if (existing.isPresent()) {
-            } else {
-                // DTO -> Entity 변환 및 저장
+            if (existing.isEmpty()) {
                 RouteIdEntity entity = routeMapper.toEntity(routeInfo);
                 routeIdRepository.save(entity);
-
                 log.info("✅ routeId={} 저장 완료 (routeNo={}, direction={})",
                         entity.getRouteId(), entity.getRouteNo(), entity.getDirection());
                 saveCount++;

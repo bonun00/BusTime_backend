@@ -1,7 +1,7 @@
 package bonun.bustime.config;
 
-import bonun.bustime.service.ExcelToChilwonService;
-import bonun.bustime.service.ExcelToMasanService;
+import bonun.bustime.excel.ExcelToChilwonService;
+import bonun.bustime.excel.ExcelToMasanService;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
